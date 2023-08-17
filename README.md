@@ -142,10 +142,10 @@ To make it easier, there is cloudformation template in /backend-infrastructure/c
 ```bash
 aws cloudformation create-stack --stack-name terraform-backend
    --template-body file:///backend-infrastructure/code/backend.yml
-   --parameters ParameterKey=StateBucketName,ParameterValue=<your_bucket_name> ParameterKey=LockTableName,ParameterValue=<your_lock_table_name>
+   --parameters ParameterKey=StateBucketName,ParameterValue=<bucket_name_to_create> ParameterKey=LockTableName,ParameterValue=<lock_table_name_to_create>
 ```
-- Replace <your_bucket_name> with your bucket name
-- Replace <your_lock_table_name> with your DynamoDB lock table name
+- Replace <bucket_name_to_create> with your bucket name
+- Replace <lock_table_name_to_create> with your DynamoDB lock table name
 
 You will need to update the bucket and dynamodb_table values in the /infrastructure/code/state.tf file accordingly.
 
@@ -173,14 +173,49 @@ The Terraform code expects the following variables are set:
 - image_path (string) - Path to ECR repository to pull the image from
 - image_tag (string) - The tag to fetch for the image from the repository
 
+You can create your terraform.tfvars file in \infrastructure\code folder which looks like this:
+```tf
+region       = "eu-west-2"
+project_name = "ecs-fargate-poc"
+
+vpc_data = {
+  vpc_cidr = "10.0.0.0/16"
+  availability_zones = [{
+    az_name                 = "eu-west-2a"
+    public_subnet_cidr      = "10.0.0.0/20"
+    private_app_subnet_cidr = "10.0.64.0/20"
+    private_db_subnet_cidr  = "10.0.128.0/20"
+    },
+    {
+      az_name                 = "eu-west-2b"
+      public_subnet_cidr      = "10.0.16.0/20"
+      private_app_subnet_cidr = "10.0.80.0/20"
+      private_db_subnet_cidr  = "10.0.144.0/20"
+    },
+    {
+      az_name                 = "eu-west-2c"
+      public_subnet_cidr      = "10.0.32.0/20"
+      private_app_subnet_cidr = "10.0.96.0/20"
+      private_db_subnet_cidr  = "10.0.160.0/20"
+  }]
+}
+
+root_domain          = "yasserabbasi.com"
+app_subdomain        = "web"
+app_name             = "sample-app"
+app_hosted_zone_name = "playground"
+image_path           = "174273434682.dkr.ecr.eu-west-2.amazonaws.com/sample-app-docker-images"
+image_tag            = "latest"
+```
+
 ### Permissions
 This project uses the priciple of least privilege. It can be a time consuming task to figure out the exact privileges needed for your terraform code to run. I came across this cool tool [iamlive](https://github.com/iann0036/iamlive) created by [Ian McKay](https://github.com/iann0036) that massively helps to figure out the secuity permissions needed.
 
-Followed this [article](https://meirg.co.il/2021/04/23/determining-aws-iam-policies-according-to-terraform-and-aws-cli/) by [Meir Gabay](https://meirg.co.il/about/) to run iamlive in a docker container to extract the permissions. The tool identified about 80% of the permisisons and the rest I had to figure out by running terraform plan/apply and seeing where it failed, but still, a pretty cool and awesome tool!
+I Followed this [article](https://meirg.co.il/2021/04/23/determining-aws-iam-policies-according-to-terraform-and-aws-cli/) by [Meir Gabay](https://meirg.co.il/about/) to run iamlive in a docker container to extract the permissions. The tool identified about 80% of the permisisons and the rest I had to figure out by running terraform plan/apply and seeing where it failed, but still, a pretty cool and awesome tool!
 
-To save you some time, you can find the policy json file in /infrastructure/policies/policy.json file.
+If you went through the setup steps above, this policy should already have been created in your AWS account with the name "SampleAppTerraformAccess"
 
-Create an AWS policy using this file and attach the same policy to the aws account your are using to run terraform and the [github-oidc-provider-aws](#open-id-connect) role you created. This way, your the aws account you use to run terraform commands locally and the GitHub Actions workflow will have exactly the same permissions as needed by this repository.
+Attach the same policy to the aws account your are using to run terraform. This way, your the aws account you use to run terraform commands locally and the GitHub Actions workflow will have exactly the same permissions as needed by this repository.
 
 ### GitHub Actions
 - Create a Github Actions variable ```TF_DESTROY```. 
