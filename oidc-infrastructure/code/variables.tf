@@ -8,3 +8,9 @@ variable "region" {
     error_message = "Must be valid AWS region name"
   }
 }
+
+variable "repositories"{
+  description = "The repositories allowed to talk to AWS for OIDC integration"
+  type = list
+}
+

@@ -45,7 +45,47 @@ npm start
 
 ### AWS
 #### Open ID Connect
-This project uses OpenID Connect to talk to AWS. To get that to work, you will need to:
+This project uses OpenID Connect to talk to AWS. There is a Terraform module that does this for you but I had to remove it out of the main infrastructure code as it is a catch 22 if deploying through Github Actions! You need the integration there for the Github Actions Workflow to run. 
+
+Steps to setup:
+1. Go to the \oidc-infrastructure\code folder
+    ```bash
+    cd .\oidc-infrastructure\code
+    ```
+2. Create your terraform.tfvars file add add these variables
+    ```tf
+    region = "eu-west-2" #region of your choice
+    repositories = ["<path to your repo here>"] #This needs to be in the format github-account/repo-name e.g. yasser-abbasi-git/ecs-fargate-poc
+    ```
+3. Ensure the AWS CLI profile you are running Terraform with has at least the following permissions:
+    ```json
+    {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateOpenIDConnectProvider",
+                "iam:DeleteOpenIDConnectProvider",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:CreatePolicy",
+                "iam:DeletePolicy",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:ListPolicyVersions",
+                "iam:AttachRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:GetOpenIDConnectProvider",
+                "iam:GetRole",
+                "iam:ListRolePolicies",
+                "iam:ListAttachedRolePolicies"
+            ],
+            "Resource": "*"
+        }
+    ]}
+    ```
 - Create a role **github-oidc-provider-aws** in your AWS account
 - Attach the **EC2InstanceProfileForImageBuilderECRContainerBuilds** Policy to the role
 - Setup trust relationship for the role
