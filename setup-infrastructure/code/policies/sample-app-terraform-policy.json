@@ -82,6 +82,7 @@
                 "elasticloadbalancing:DescribeTargetGroupAttributes",
                 "elasticloadbalancing:CreateRule",
                 "elasticloadbalancing:AddTags",
+                "elasticloadbalancing:SetSubnets",
                 "ecs:CreateService",
                 "iam:PassRole",
                 "elasticloadbalancing:DescribeRules",
@@ -118,7 +119,18 @@
                 "ec2:DisassociateAddress",
                 "ec2:ReleaseAddress",
                 "ec2:DetachInternetGateway",
-                "ec2:DeleteVpc"
+                "ec2:DeleteVpc",
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeImages",
+                "ecr:DescribeRepositories",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:InitiateLayerUpload",
+                "ecr:ListImages",
+                "ecr:PutImage",
+                "ecr:UploadLayerPart"
             ],
             "Resource": "*"
         }
