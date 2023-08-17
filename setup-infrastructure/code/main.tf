@@ -13,3 +13,12 @@ module "github-oidc" {
   repositories              = var.repositories
   oidc_role_attach_policies = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly", aws_iam_policy.sample_app_terraform.arn]
 }
+
+resource "aws_ecr_repository" "this" {
+  name                 = var.ecr_repository_name
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}

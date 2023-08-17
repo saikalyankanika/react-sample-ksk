@@ -44,18 +44,19 @@ npm start
 ```
 
 ### AWS
-#### Open ID Connect
-This project uses OpenID Connect to talk to AWS. There is a Terraform module that does this for you but I had to remove it out of the main infrastructure code as it is a catch 22 if deploying through Github Actions! You need the integration there for the Github Actions Workflow to run. 
+#### Open ID Connect and ECR Repository
+This project uses OpenID Connect to talk to AWS. There is a Terraform module that does this for you but I had to remove it out of the main infrastructure code for this poc as it is a catch 22 if deploying through Github Actions! You need the integration there for the Github Actions Workflow to run. 
 
 Steps to setup:
-1. Go to the \oidc-infrastructure\code folder
+1. Go to the \setup-infrastructure\code folder
     ```bash
-    cd .\oidc-infrastructure\code
+    cd .\setup-infrastructure\code
     ```
 2. Create your terraform.tfvars file add add these variables
     ```tf
     region = "eu-west-2" #region of your choice
     repositories = ["<path to your repo here>"] #This needs to be in the format github-account/repo-name e.g. yasser-abbasi-git/ecs-fargate-poc
+    ecr_repository_name = "<name of repository to create>"
     ```
 3. Ensure the AWS CLI profile you are running Terraform with has at least the following permissions:
     ```json
@@ -80,38 +81,43 @@ Steps to setup:
                 "iam:GetOpenIDConnectProvider",
                 "iam:GetRole",
                 "iam:ListRolePolicies",
-                "iam:ListAttachedRolePolicies"
+                "iam:ListAttachedRolePolicies",
+                "ecr:CreateRepository",
+                "ecr:DescribeRepositories",
+                "ecr:DeleteRepository",
+                "ecr:ListTagsForResource",
+                "ecr:PutLifecyclePolicy",
+                "ecr:GetLifecyclePolicy",
+                "ecr:SetRepositoryPolicy",
+                "ecr:GetRepositoryPolicy",
+                "ecr:DeleteRepositoryPolicy",
+                "ecr:DeleteLifecyclePolicy",
+                "ecr:PutImageTagMutability"
             ],
             "Resource": "*"
         }
     ]}
     ```
-- Create a role **github-oidc-provider-aws** in your AWS account
-- Attach the **EC2InstanceProfileForImageBuilderECRContainerBuilds** Policy to the role
-- Setup trust relationship for the role
-    ```json
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {
-                    "Federated": "arn:aws:iam::<YOUR_AWS_ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
-                },
-                "Action": "sts:AssumeRoleWithWebIdentity",
-                "Condition": {
-                    "StringLike": {
-                        "token.actions.githubusercontent.com:sub": "repo:<YOUR_REPO_PATH_WITHOUT_THE_HTTPS>:*"
-                    }
-                }
-            }
-        ]
-    }
+4. Run Terraform commands
+    ```tf
+    terraform init
     ```
-    Replace <YOUR_AWS_ACCOUNT_ID> with your AWS AccountId and <YOUR_REPO_PATH_WITHOUT_THE_HTTPS> with your repo path that needs to be given access. e.g. yasser-abbasi-git/ecs-fargate-poc
+    ```tf
+    terraform plan #Review the generated plan
+    ```
+    ```tf
+    terraform apply #confirm with yes
+    ```
+This will create the identify provider, role and trust relationship for integration between GutHub and your AWS account and the ECR repository to store your docker images.
+
+This also creates policy called "SampleAppTerraformAccess" which has the permission needed to run the code for the poc. This policy is attached to the github-oidc-provider-aws role created by this setup.
+
+>**If you would like to try out/run the Terraform code for this poc from your local machine, then you can attach the "SampleAppTerraformAccess" policy to the group/user for your AWS credentials used for running Terraform.**
 
 #### ECR Repository
-You will also need to create an ECR repository in your AWS account to host the docker images and update the values for ECR_REPO_NAME and IAM_ROLE_ARN in the .github\workflows\push-image.yml file.
+In the .github\workflows\push-image.yml file, update the values for 
+- ECR_REPO_NAME with the name of the ECR repository created in the last step
+- IAM_ROLE_ARN with the arn for the github-oidc-provider-aws role created in the last step 
 
 #### Root Domain Hosted Zone and ACM certificate
 This is the hosted zone for the domain I registered with AWS Route 53. This will act as the parent 
