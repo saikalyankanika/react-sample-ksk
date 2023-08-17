@@ -121,7 +121,7 @@ In the .github\workflows\push-image.yml file, update the values for
 
 #### Root Domain Hosted Zone and ACM certificate
 This is the hosted zone for the domain I registered with AWS Route 53. This will act as the parent 
-domain. This hosted zone needs to be exist in your AWS account in the specified region and a valid ACM certification should be there for the root domain.
+domain. This hosted zone needs to be there in your AWS account in the specified region and a valid ACM certificate should be there for the root domain.
 
 For more info read:
 
@@ -200,11 +200,13 @@ vpc_data = {
   }]
 }
 
-root_domain          = "yasserabbasi.com"
+root_domain          = "<your root domain>" #e.g. yasserabbasi.com
 app_subdomain        = "web"
 app_name             = "sample-app"
 app_hosted_zone_name = "playground"
-image_path           = "174273434682.dkr.ecr.eu-west-2.amazonaws.com/sample-app-docker-images"
+
+#image_path will be in the format <your aws account id>.dkr.ecr.eu-west-2.amazonaws.com/<name of your ecr repository
+image_path           = "<path to your docker images repositor>" 
 image_tag            = "latest"
 ```
 
