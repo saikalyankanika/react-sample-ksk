@@ -1,0 +1,10 @@
+variable "region" {}
+variable "project_name" {}
+variable "app_name" {}
+variable "private_app_subnets" {}
+variable "vpc_id" {}
+variable "ecs_task_execution_role_arn" {}
+variable "load_balancer_security_group_id" {}
+variable "target_group_arn" {}
+variable "image_path" {}
+variable "image_tag" {}

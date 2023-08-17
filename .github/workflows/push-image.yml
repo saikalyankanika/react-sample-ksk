@@ -1,0 +1,39 @@
+# The workflow builds and pushes the docker image to ecr
+name: Upload to ECR workflow
+on:
+  push:
+    branches: [ main ]
+env:
+  ECR_REPO_NAME : sample-app-docker-images
+  AWS_REGION : eu-west-2
+  IAM_ROLE_ARN: arn:aws:iam::174273434682:role/github-oidc-provider-aws
+permissions:
+      id-token: write
+      contents: read
+jobs:
+  build-upload:
+    name: Build and Upload Image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ env.IAM_ROLE_ARN }}
+        role-session-name: samplerolesession
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.ECR_REPO_NAME }}
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
