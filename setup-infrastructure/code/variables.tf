@@ -9,13 +9,13 @@ variable "region" {
   }
 }
 
-variable "repositories"{
+variable "repositories" {
   description = "The repositories allowed to talk to AWS for OIDC integration"
-  type = list
+  type        = list(any)
 }
 
-variable "ecr_repository_name"{
+variable "ecr_repository_name" {
   description = "The name of the ECR repository to create"
-  type = string
-  default = "sample-app-docker-images"
+  type        = string
+  default     = "sample-app-docker-images"
 }
