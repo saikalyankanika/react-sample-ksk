@@ -13,7 +13,7 @@ The Terraform modules in this POC are:
 
 - VPC - Provisions the VPC, the public and private subnets, internet gateway, public route tables, route table associations for the public subnets, and VPC endpoints
 
-- Nat Gateway - Provisions the Elastic IPs, Nat Gatways, the private route tables, and route table association for the private subnets
+- Nat Gateway - Provisions the Elastic IPs, Nat Gateways, the private route tables, and route table association for the private subnets
 
 - IAM - Provisions the IAM role for ecs task execution and attaches AmazonECSTaskExecutionRolePolicy to the role
 
@@ -119,7 +119,10 @@ This also creates policy called "SampleAppTerraformAccess" which has the permiss
 #### ECR Repository
 In the .github\workflows\push-image.yml file, update the values for 
 - ECR_REPO_NAME with the name of the ECR repository created in the last step
-- IAM_ROLE_ARN with the arn for the github-oidc-provider-aws role created in the last step 
+- IAM_ROLE_ARN with the arn for the github-oidc-provider-aws role created in the last step.
+
+
+> Please note, the ECR repository is created with "MUTABLE" tag, which isn't best practice, it is recommended the tag is set to "IMMUTABLE". In this POC I'm always tagging the docker image with the "latest" tag which replaces the last image uploaded with the same tag, using the "IMMUTABLE" tag will not work in this scenario.
 
 #### Root Domain Hosted Zone and ACM certificate
 This is the hosted zone for the root domain I registered with AWS Route 53. This will act as the parent domain. The root domain hosted zone needs to be there in your AWS account in the specified region and a valid ACM certificate should be there for the root domain.
@@ -130,7 +133,7 @@ For more info read:
 
 [Registering and managing domains using Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/registrar.html)
 
-[Issuing and managing certficates](https://docs.aws.amazon.com/acm/latest/userguide/gs.html)
+[Issuing and managing certificates](https://docs.aws.amazon.com/acm/latest/userguide/gs.html)
 
 [DNS Delegation](https://notes.paulswail.com/public/How+to+delegate+DNS+for+subdomains+to+a+different+Route53+HostedZone)
 
@@ -166,7 +169,7 @@ The Terraform code expects the following variables are set:
     })
     ```
 - root_domain (string) - Root domain for the application. This is the parent domain where the NS records will be created for the sub-domain hosted zone for DNS delegation
-- app_subdomain(string) - The subdomain name to use for the aplication. e.g. "web"
+- app_subdomain(string) - The subdomain name to use for the application. e.g. "web"
 - app_name (string) - Name of the application used for tagging resources
 - app_hosted_zone_name (string) - Name of the hosted zone for the application dns records. This zone will be created by the Terraform code. e.g. "playground"
 - image_path (string) - Path to ECR repository to pull the image from
@@ -210,9 +213,9 @@ image_tag            = "latest"
 ```
 
 ### Permissions
-This project uses the priciple of least privilege. It can be a time consuming task to figure out the exact privileges needed for your terraform code to run. I came across this cool tool [iamlive](https://github.com/iann0036/iamlive) created by [Ian McKay](https://github.com/iann0036) that massively helps to figure out the secuity permissions needed.
+This project uses the principle of least privilege. It can be a time consuming task to figure out the exact privileges needed for your terraform code to run. I came across this cool tool [iamlive](https://github.com/iann0036/iamlive) created by [Ian McKay](https://github.com/iann0036) that massively helps to figure out the security permissions needed.
 
-I Followed this [article](https://meirg.co.il/2021/04/23/determining-aws-iam-policies-according-to-terraform-and-aws-cli/) by [Meir Gabay](https://meirg.co.il/about/) to run iamlive in a docker container to extract the permissions. The tool identified about 80% of the permisisons and the rest I had to figure out by running terraform plan/apply and seeing where it failed, but still, a pretty cool and awesome tool!
+I Followed this [article](https://meirg.co.il/2021/04/23/determining-aws-iam-policies-according-to-terraform-and-aws-cli/) by [Meir Gabay](https://meirg.co.il/about/) to run iamlive in a docker container to extract the permissions. The tool identified about 80% of the permissions and the rest I had to figure out by running terraform plan/apply and seeing where it failed, but still, a pretty cool and awesome tool!
 
 If you went through the setup steps above, a  policy with these permissions should already have been created in your AWS account with the name "SampleAppTerraformAccess" and attached to the 	
 github-oidc-provider-aws role.
