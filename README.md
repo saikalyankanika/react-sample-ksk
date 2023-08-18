@@ -11,13 +11,13 @@ The application code is the sample-app folder
 ## Terraform Modules
 The Terraform modules in this POC are:
 
-- VPC - Provisions the VPC, the public and private subnetsm internet gateway, public route tables, route table associations for the public subnets, and VPC endpoints
+- VPC - Provisions the VPC, the public and private subnets, internet gateway, public route tables, route table associations for the public subnets, and VPC endpoints
 
 - Nat Gateway - Provisions the Elastic IPs, Nat Gatways, the private route tables, and route table association for the private subnets
 
 - IAM - Provisions the IAM role for ecs task execution and attaches AmazonECSTaskExecutionRolePolicy to the role
 
-- Route 53 - Provisions the hosted zone for the application dns records and provisions the dns records for the application. Utilises the terraform-aws-modules/route53/aws//modules/records module
+- Route 53 - Provisions the hosted zone for the application dns records and creates the dns records. Utilises the terraform-aws-modules/route53/aws//modules/records module
 
 - ACM - Provisions the certificate with dns validation for the domain to be used by the application. Utilises terraform-aws-modules/acm/aws module
 
@@ -32,6 +32,8 @@ The Terraform modules in this POC are:
     - Terraform 1.5.5 or higher
 - AWS CLI
     - Version 2.12.0 or higher
+- Experience with AWS
+- Experience with Terraform
 
 ## Setup
 ### Sample application
@@ -45,18 +47,18 @@ npm start
 
 ### AWS
 #### Open ID Connect and ECR Repository
-This project uses OpenID Connect to talk to AWS. There is a Terraform module that does this for you but I had to remove it out of the main infrastructure code for this poc as it is a catch 22 if deploying through Github Actions! You need the integration there for the Github Actions Workflow to run. 
+This project uses OpenID Connect to talk to AWS. There is a Terraform module that does this for you but I had to remove it out of the main infrastructure code for this POC as it is a catch 22 if deploying through Github Actions! You need the integration there for the Github Actions Workflow to run and provision your infrastructure. 
 
 Steps to setup:
 1. Go to the \setup-infrastructure\code folder
     ```bash
     cd .\setup-infrastructure\code
     ```
-2. Create your terraform.tfvars file add add these variables
+2. Create your terraform.tfvars file and add these variables
     ```tf
     region = "eu-west-2" #region of your choice
-    repositories = ["<path to your repo here>"] #This needs to be in the format github-account/repo-name e.g. yasser-abbasi-git/ecs-fargate-poc
-    ecr_repository_name = "<name of repository to create>"
+    repositories = ["<path to your github repo here>"] #This needs to be in the format github-account/repo-name e.g. yasser-abbasi-git/ecs-fargate-poc
+    ecr_repository_name = "<name of ecr repository to create>"
     ```
 3. Ensure the AWS CLI profile you are running Terraform with has at least the following permissions:
     ```json
@@ -108,11 +110,11 @@ Steps to setup:
     ```tf
     terraform apply #confirm with yes
     ```
-This will create the identify provider, role and trust relationship for integration between GutHub and your AWS account and the ECR repository to store your docker images.
+This will create the identify provider, role and trust relationship for integration between GitHub and your AWS account. This will also create the ECR repository to store your docker images.
 
-This also creates policy called "SampleAppTerraformAccess" which has the permission needed to run the code for the poc. This policy is attached to the github-oidc-provider-aws role created by this setup.
+This also creates policy called "SampleAppTerraformAccess" which has the permission needed to run the code for the POC. This policy is attached to the github-oidc-provider-aws role created by this setup.
 
->**If you would like to try out/run the Terraform code for this poc from your local machine, then you can attach the "SampleAppTerraformAccess" policy to the group/user for your AWS credentials used for running Terraform.**
+>**If you would like to try out/run the Terraform code for this POC from your local machine, then you can attach the "SampleAppTerraformAccess" policy to the group/user for your AWS credentials used for running Terraform.**
 
 #### ECR Repository
 In the .github\workflows\push-image.yml file, update the values for 
@@ -120,8 +122,7 @@ In the .github\workflows\push-image.yml file, update the values for
 - IAM_ROLE_ARN with the arn for the github-oidc-provider-aws role created in the last step 
 
 #### Root Domain Hosted Zone and ACM certificate
-This is the hosted zone for the domain I registered with AWS Route 53. This will act as the parent 
-domain. This hosted zone needs to be there in your AWS account in the specified region and a valid ACM certificate should be there for the root domain.
+This is the hosted zone for the root domain I registered with AWS Route 53. This will act as the parent domain. The root domain hosted zone needs to be there in your AWS account in the specified region and a valid ACM certificate should be there for the root domain.
 
 For more info read:
 
@@ -135,8 +136,6 @@ For more info read:
 
 ### Terraform
 #### Backend
-Setup S3 Bucket and DynamoDB table for the remote backend and update the bucket value with your S3 bucket name and the dynamodb_table value with your DynamoDB table name in the /infrastructure/code/state.tf file.
-
 To make it easier, there is cloudformation template in /backend-infrastructure/code/backend.yml that will create the CloudFormation stack for you. To create the stack, run the command
 
 ```bash
@@ -166,10 +165,10 @@ The Terraform code expects the following variables are set:
         }))
     })
     ```
-- root_domain (string) - Root domain for the application. This is the parent domain where the NS records will be created for the application hosted zone for DNS delegation
+- root_domain (string) - Root domain for the application. This is the parent domain where the NS records will be created for the sub-domain hosted zone for DNS delegation
 - app_subdomain(string) - The subdomain name to use for the aplication. e.g. "web"
 - app_name (string) - Name of the application used for tagging resources
-- app_hosted_zone_name (string) - Name of the hosted zone for the application dns records. This zone will be created by the Terraform code
+- app_hosted_zone_name (string) - Name of the hosted zone for the application dns records. This zone will be created by the Terraform code. e.g. "playground"
 - image_path (string) - Path to ECR repository to pull the image from
 - image_tag (string) - The tag to fetch for the image from the repository
 
@@ -205,8 +204,8 @@ app_subdomain        = "web"
 app_name             = "sample-app"
 app_hosted_zone_name = "playground"
 
-#image_path will be in the format <your aws account id>.dkr.ecr.eu-west-2.amazonaws.com/<name of your ecr repository
-image_path           = "<path to your docker images repositor>" 
+#image_path will be in the format <your aws account id>.dkr.ecr.eu-west-2.amazonaws.com/<name of your ecr repository>
+image_path           = "<path to your docker images repository>" 
 image_tag            = "latest"
 ```
 
@@ -215,12 +214,13 @@ This project uses the priciple of least privilege. It can be a time consuming ta
 
 I Followed this [article](https://meirg.co.il/2021/04/23/determining-aws-iam-policies-according-to-terraform-and-aws-cli/) by [Meir Gabay](https://meirg.co.il/about/) to run iamlive in a docker container to extract the permissions. The tool identified about 80% of the permisisons and the rest I had to figure out by running terraform plan/apply and seeing where it failed, but still, a pretty cool and awesome tool!
 
-If you went through the setup steps above, this policy should already have been created in your AWS account with the name "SampleAppTerraformAccess"
+If you went through the setup steps above, a  policy with these permissions should already have been created in your AWS account with the name "SampleAppTerraformAccess" and attached to the 	
+github-oidc-provider-aws role.
 
-Attach the same policy to the aws account your are using to run terraform. This way, your the aws account you use to run terraform commands locally and the GitHub Actions workflow will have exactly the same permissions as needed by this repository.
+Attach the same policy to the aws account you are using to run terraform locally. This way, the aws account you use to run terraform commands locally and the GitHub Actions workflow will have exactly the same permissions as needed by this repository.
 
 ### GitHub Actions
-- Create a Github Actions variable ```TF_DESTROY```. 
+- Create a Github Actions variable in your repository ```TF_DESTROY```. 
     - When set to false, the terraform plan and apply commands run as part of the infrastructure build.
     - When set to true, terraform destroy command runs as part of the infrastructure build.
 
