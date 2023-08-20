@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
 env:
-  ECR_REPO_NAME : sample-app-docker-images
+  ECR_REPO_NAME : ${{ vars.ECR_REPOSITORY_NAME }}
   AWS_REGION : ${{ vars.REGION }}
   IAM_ROLE_ARN: ${{ secrets.OIDC_ROLE_ARN }}
 permissions:
