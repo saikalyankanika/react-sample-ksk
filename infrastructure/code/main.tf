@@ -3,6 +3,8 @@ locals {
   sample_app_domain      = "${var.app_subdomain}.${local.app_hosted_zone_domain}"
 }
 
+data "aws_caller_identity" "current" {}
+
 # create vpc
 module "vpc" {
   source                        = "./modules/vpc"
@@ -76,6 +78,6 @@ module "ecs" {
   load_balancer_security_group_id = module.alb.alb_security_group_id
   target_group_arn                = module.alb.target_group_arn
   ecs_task_execution_role_arn     = module.iam.ecs_task_execution_role_arn
-  image_path                      = var.image_path
+  image_path                      = replace(replace(var.image_path, "{AWS-accountID}", data.aws_caller_identity.current.account_id), "{region}", var.region)
   image_tag                       = var.image_tag
 }

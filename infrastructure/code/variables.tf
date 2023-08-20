@@ -78,7 +78,7 @@ variable "app_hosted_zone_name" {
 variable "image_path" {
   description = "Path to ECR"
   type        = string
-  default     = "174273434682.dkr.ecr.eu-west-2.amazonaws.com/sample-app-docker-images"
+  default     = "{AWS-accountID}.dkr.ecr.eu-west-2.amazonaws.com/sample-app-docker-images"
 }
 
 variable "image_tag" {
