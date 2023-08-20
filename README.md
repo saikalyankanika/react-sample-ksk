@@ -134,11 +134,11 @@ For more info read:
 
 ### Terraform
 #### Backend
-To make it easier, there is cloudformation template in /backend-infrastructure/code/backend.yml that will create the CloudFormation stack for you. To create the stack, run the command
+To make it easier, there is cloudformation template in /backend-infrastructure/code/backend.yaml that will create the CloudFormation stack for you. To create the stack, run the command
 
 ```bash
 aws cloudformation create-stack --stack-name terraform-backend
-   --template-body file:///backend-infrastructure/code/backend.yml
+   --template-body file:///backend-infrastructure/code/backend.yaml
    --parameters ParameterKey=StateBucketName,ParameterValue=<bucket_name_to_create> ParameterKey=LockTableName,ParameterValue=<lock_table_name_to_create>
 ```
 - Replace <bucket_name_to_create> with your bucket name
