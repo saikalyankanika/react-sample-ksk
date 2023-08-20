@@ -9,9 +9,9 @@ permissions:
   id-token: write # This is required for requesting the JWT
   contents: read  # This is required for actions/checkout
 env:
-  AWS_REGION: eu-west-2
+  AWS_REGION: ${{ vars.REGION }}
   TF_WORKING_DIR: ./infrastructure/code
-  IAM_ROLE_ARN: arn:aws:iam::174273434682:role/github-oidc-provider-aws
+  IAM_ROLE_ARN: ${{ secrets.OIDC_ROLE_ARN }}
 jobs:
   terraform:
     name: Terraform

@@ -5,8 +5,8 @@ on:
     branches: [ main ]
 env:
   ECR_REPO_NAME : sample-app-docker-images
-  AWS_REGION : eu-west-2
-  IAM_ROLE_ARN: arn:aws:iam::174273434682:role/github-oidc-provider-aws
+  AWS_REGION : ${{ vars.REGION }}
+  IAM_ROLE_ARN: ${{ secrets.OIDC_ROLE_ARN }}
 permissions:
       id-token: write
       contents: read
