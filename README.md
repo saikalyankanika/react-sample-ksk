@@ -117,11 +117,6 @@ This also creates policy called "SampleAppTerraformAccess" which has the permiss
 >**If you would like to try out/run the Terraform code for this POC from your local machine, then you can attach the "SampleAppTerraformAccess" policy to the group/user for your AWS credentials used for running Terraform.**
 
 #### ECR Repository
-In the .github\workflows\push-image.yml file, update the values for 
-- ECR_REPO_NAME with the name of the ECR repository created in the last step
-- IAM_ROLE_ARN with the arn for the github-oidc-provider-aws role created in the last step.
-
-
 > Please note, the ECR repository is created with "MUTABLE" tag, which isn't best practice, it is recommended the tag is set to "IMMUTABLE". In this POC I'm always tagging the docker image with the "latest" tag which replaces the last image uploaded with the same tag, using the "IMMUTABLE" tag will not work in this scenario.
 
 #### Root Domain Hosted Zone and ACM certificate
@@ -207,7 +202,7 @@ app_subdomain        = "web"
 app_name             = "sample-app"
 app_hosted_zone_name = "playground"
 
-#image_path will be in the format <your aws account id>.dkr.ecr.eu-west-2.amazonaws.com/<name of your ecr repository>
+#image_path will be in the format <your aws account id>.dkr.ecr.<region>.amazonaws.com/<name of your ecr repository>
 image_path           = "<path to your docker images repository>" 
 image_tag            = "latest"
 ```
@@ -223,9 +218,13 @@ github-oidc-provider-aws role.
 Attach the same policy to the aws account you are using to run terraform locally. This way, the aws account you use to run terraform commands locally and the GitHub Actions workflow will have exactly the same permissions as needed by this repository.
 
 ### GitHub Actions
-- Create a Github Actions variable in your repository ```TF_DESTROY```. 
+- Create the following Github Actions repository variables in your repository 
+- ```TF_DESTROY```
     - When set to false, the terraform plan and apply commands run as part of the infrastructure build.
     - When set to true, terraform destroy command runs as part of the infrastructure build.
+- ```REGION``` - Set the value to our preferred region
+- ECR_REPOSITORY_NAME - Set the value to your ECR repository name
+
 
 ## Credits
 - [iamlive](https://github.com/iann0036/iamlive) by [Ian McKay](https://github.com/iann0036)
