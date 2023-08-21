@@ -16,19 +16,19 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  # TerraformLockTable:
-  #   Type: 'AWS::DynamoDB::Table'
-  #   Properties:
-  #     AttributeDefinitions:
-  #       - AttributeName: LockID
-  #         AttributeType: S
-  #     KeySchema:
-  #       - AttributeName: LockID
-  #         KeyType: HASH
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 5
-  #       WriteCapacityUnits: 5
-  #     TableName: !Ref LockTableName
+  TerraformLockTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LockID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: LockID
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: !Ref LockTableName
 
 Outputs:
   StackName:
