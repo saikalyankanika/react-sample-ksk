@@ -134,17 +134,9 @@ For more info read:
 
 ### Terraform
 #### Backend
-To make it easier, there is cloudformation template in /backend-infrastructure/code/backend.yaml that will create the CloudFormation stack for you. To create the stack, run the command
+To make it easier, there is a cloudformation template in the repo [https://github.com/yasser-abbasi-git/terraform-backend-setup](https://github.com/yasser-abbasi-git/terraform-backend-setup) that will create the CloudFormation stack for you. 
 
-```bash
-aws cloudformation create-stack --stack-name terraform-backend
-   --template-body file:///backend-infrastructure/code/backend.yaml
-   --parameters ParameterKey=StateBucketName,ParameterValue=<bucket_name_to_create> ParameterKey=LockTableName,ParameterValue=<lock_table_name_to_create>
-```
-- Replace <bucket_name_to_create> with your bucket name
-- Replace <lock_table_name_to_create> with your DynamoDB lock table name
-
-You will need to update the bucket and dynamodb_table values in the /infrastructure/code/state.tf file accordingly.
+After the S3 bucket and DynamoDB table are provisioned, you will need to update the bucket and dynamodb_table values in the /infrastructure/code/state.tf file accordingly.
 
 #### Variables
 The Terraform code expects the following variables are set:
