@@ -219,12 +219,13 @@ Attach the same policy to the aws account you are using to run terraform locally
 
 ### GitHub Actions
 - Create the following Github Actions repository variables in your repository 
-- ```TF_DESTROY```
-    - When set to false, the terraform plan and apply commands run as part of the infrastructure build.
-    - When set to true, terraform destroy command runs as part of the infrastructure build.
-- ```REGION``` - Set the value to our preferred region
-- ECR_REPOSITORY_NAME - Set the value to your ECR repository name
-
+    - ```TF_DESTROY```
+        - When set to false, the terraform plan and apply commands run as part of the infrastructure build.
+        - When set to true, terraform destroy command runs as part of the infrastructure build.
+    - ```REGION``` - Set the value to our preferred region
+    - ```ECR_REPOSITORY_NAME``` - Set the value to your ECR repository name
+- Create the following GitHub Secret
+    - ```OIDC_ROLE_ARN``` - Set the value to the role ARN for the github-oidc role created as part of the setup.
 
 ## Credits
 - [iamlive](https://github.com/iann0036/iamlive) by [Ian McKay](https://github.com/iann0036)
