@@ -30,7 +30,7 @@ module "iam" {
 }
 
 module "route53" {
-  source                     = "github.com/yasser-abbasi-git/tfmodule-hostedzone-and-dns?ref=v1.1"
+  source                     = "github.com/yasser-abbasi-git/tfmodule-hostedzone-and-dns?ref=v1.2"
   root_domain                = var.root_domain
   hosted_zone_domain         = local.app_hosted_zone_domain
   hosted_zone_name           = var.app_hosted_zone_name
