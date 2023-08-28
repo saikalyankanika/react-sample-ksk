@@ -30,13 +30,13 @@ module "iam" {
 }
 
 module "route53" {
-  source                 = "./modules/route53"
-  root_domain            = var.root_domain
-  app_hosted_zone_domain = local.app_hosted_zone_domain
-  app_hosted_zone_name   = var.app_hosted_zone_name
-  app_subdomain          = var.app_subdomain
-  alb_dns_name           = module.alb.alb_dns_name
-  alb_zone_id            = module.alb.alb_zone_id
+  source                     = "github.com/yasser-abbasi-git/tfmodule-hostedzone-and-dns?ref=v1.1"
+  root_domain                = var.root_domain
+  hosted_zone_domain         = local.app_hosted_zone_domain
+  hosted_zone_name           = var.app_hosted_zone_name
+  subdomain                  = var.app_subdomain
+  a_record_alias_domain_name = module.alb.alb_dns_name
+  a_record_alias_zone_id     = module.alb.alb_zone_id
 }
 
 # Create acm certificate
@@ -45,7 +45,7 @@ module "acm" {
   version = "~> 4.0"
 
   domain_name         = "*.${local.app_hosted_zone_domain}"
-  zone_id             = module.route53.app_hosted_zone.zone_id
+  zone_id             = module.route53.hosted_zone_zone_id
   wait_for_validation = true
 
   tags = {
@@ -53,7 +53,7 @@ module "acm" {
   }
 
   depends_on = [
-    module.route53.app_hosted_zone
+    module.route53.hosted_zone
   ]
 }
 

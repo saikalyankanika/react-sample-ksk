@@ -17,7 +17,7 @@ The Terraform modules in this POC are:
 
 - IAM - Provisions the IAM role for ecs task execution and attaches AmazonECSTaskExecutionRolePolicy to the role
 
-- Route 53 - Provisions the hosted zone for the application dns records and creates the dns records. Utilises the terraform-aws-modules/route53/aws//modules/records module
+- Route 53 - Uses a terraform module hosted in another github repository to provisions the hosted zone for the application dns records and create the dns records.
 
 - ACM - Provisions the certificate with dns validation for the domain to be used by the application. Utilises terraform-aws-modules/acm/aws module
 
