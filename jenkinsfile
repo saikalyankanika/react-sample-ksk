@@ -11,7 +11,7 @@ pipeline {
 
                     echo env.collect { k, v -> "$k=$v" }.join("\n")
 
-                    def initScript = new GroovyShell().parse(new File('init.groovy'))
+                    def initScript = new GroovyShell().parse(new File('/var/jenkins_home/workspace/react-sample-app-ksk_main/init.groovy'))
                     initScript.call()
                 }
             }
