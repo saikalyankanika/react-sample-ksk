@@ -2,6 +2,7 @@ pipeline {
     agent none
     stages {
         stage('Pod Template') {
+            agent any // Allocate an agent for this stage
             steps {
                 script {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/saikalyankanika/react-sample-ksk.git']])
@@ -10,11 +11,8 @@ pipeline {
 
                     echo env.collect { k, v -> "$k=$v" }.join("\n")
 
-                    
                     def initScript = new GroovyShell().parse(new File('init.groovy'))
                     initScript.call()
-
-
                 }
             }
         }
