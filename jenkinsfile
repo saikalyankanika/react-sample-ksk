@@ -2,7 +2,6 @@ pipeline {
     agent none
     stages {
         stage('Pod Template') {
-            agent none
             steps {
                 script {
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/saikalyankanika/react-sample-ksk.git']])
