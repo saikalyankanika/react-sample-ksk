@@ -5,7 +5,7 @@ pipeline {
             agent any // Allocate an agent for this stage
             steps {
                 script {
-                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/saikalyankanika/shared-pipeline.git']])
+                    @Library('ksk') _
 
                     sh returnStatus: true, script: '''pwd'''
 
