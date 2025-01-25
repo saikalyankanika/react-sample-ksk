@@ -5,7 +5,7 @@ pipeline {
             agent any // Allocate an agent for this stage
             steps {
                 script {
-                    @Library('ksk') _
+                    @Library('ksk@master') _
 
                     sh returnStatus: true, script: '''pwd'''
 
