@@ -5,7 +5,7 @@ pipeline {
             agent any // Allocate an agent for this stage
             steps {
                 script {
-                    @Library('ksk@master') _
+                    @Library('shared-pipeline@master') _
 
                     def output = sh(script: 'pwd', returnStdout: true).trim()
                     println "Current directory: ${output}"
