@@ -15,7 +15,9 @@ pipeline {
                     def output = sh(script: 'pwd', returnStdout: true).trim()
                     println "Current directory: ${output}"
 
-                    println env
+                     env.each { key, value ->
+                        println "${key} = ${value}"
+                    }
 
                     init()
 
@@ -26,3 +28,4 @@ pipeline {
         }
     }
 }
+
