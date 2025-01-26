@@ -1,3 +1,5 @@
+@Library('shared-pipeline@master') 
+
 pipeline {
     agent none
     stages {
