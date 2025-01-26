@@ -15,9 +15,9 @@ pipeline {
                     def output = sh(script: 'pwd', returnStdout: true).trim()
                     println "Current directory: ${output}"
 
-                     for (entry in env) {
-                        echo "${entry.key} = ${entry.value}"
-                    }
+                     System.getenv().each { key, value ->
+                        echo "${key} = ${value}"
+                     }
 
                     init()
 
