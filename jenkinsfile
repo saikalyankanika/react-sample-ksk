@@ -1,4 +1,4 @@
-@Library('shared-pipeline@master') 
+@Library('shared-pipeline@master') _
 
 pipeline {
     agent none
