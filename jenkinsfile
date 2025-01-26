@@ -7,6 +7,9 @@ pipeline {
                 script {
                     // @Library('shared-pipeline@master') _
 
+                    def output_work = env.WORKSPACE
+                    println "Current directory: ${output_work}"
+
                     def output = sh(script: 'pwd', returnStdout: true).trim()
                     println "Current directory: ${output}"
 
