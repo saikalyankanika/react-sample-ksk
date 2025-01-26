@@ -12,8 +12,10 @@ pipeline {
 
                     println env
 
-                    def initScript = new GroovyShell().parse(new File('init.groovy'))
-                    initScript.call()
+                    init()
+
+                    // def initScript = new GroovyShell().parse(new File('init.groovy'))
+                    // initScript.call()
                 }
             }
         }
