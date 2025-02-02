@@ -8,7 +8,7 @@
     "containerDefinitions": [
       {
         "name": "ksk-react-app",
-        "image": "saikalyankanika/ksk-react-app:latest",
+        "image": "saikalyankanika/ksk-react-app:1.0.0",
         "portMappings": [
           {
             "containerPort": 3000,
