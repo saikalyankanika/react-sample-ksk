@@ -1,0 +1,7 @@
+organization=ksk
+projectKey=my:ksk
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.59223
+dashboardUrl=https://sonarcloud.io/dashboard?id=my%3Aksk
+ceTaskId=AZTDQV2aQJE3FqI1VvX3
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZTDQV2aQJE3FqI1VvX3

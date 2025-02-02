@@ -3,3 +3,4 @@ deploymenttype : eks
 sonarscan : true
 imagescan : true
 buildtype : npm
+ecsdeployment: true

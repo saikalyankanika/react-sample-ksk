@@ -7,8 +7,10 @@ pipeline {
             agent any // Allocate an agent for this stage
             steps {
                 script {
+
+                    sh '''rm -rf ${env.WORKSPACE}/*'''
                     // Clone the repository (shallow clone for efficiency)
-                    sh 'git clone --no-checkout https://github.com/saikalyankanika/react-sample-ksk repo'
+                    sh 'git clone --no-checkout https://github.com/saikalyankanika/react-sample-ksk'
                     
                     sh 'git checkout HEAD cicd-config.yaml'
 
